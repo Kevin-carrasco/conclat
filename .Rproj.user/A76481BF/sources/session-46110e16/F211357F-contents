@@ -45,4 +45,3 @@ bbdd <- rbind(conclat20250526, base)
 
 writexl::write_xlsx(bbdd, "bbdd_20250616.xlsx")
 
-
