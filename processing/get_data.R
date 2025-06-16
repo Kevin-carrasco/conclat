@@ -34,6 +34,16 @@ session_ids_a_eliminar <- c(
 participantes <- participantes %>%
   filter(!session_id %in% session_ids_a_eliminar)
 
-writexl::write_xlsx(participantes, "conclat20250616.xlsx")
+load(url("https://github.com/Kevin-carrasco/conclat/raw/refs/heads/main/conclat20250526.RData"))
 
+sessions2 <- conclat20250526$session_id
+
+base <- participantes %>%
+  filter(!session_id %in% sessions2)
+
+# Reordenar y unir
+base <- base[, names(conclat20250526)]
+bbdd <- rbind(conclat20250526, base)
+
+writexl::write_xlsx(bbdd, "bbdd_20250616.xlsx")
 

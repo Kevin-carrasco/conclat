@@ -34,6 +34,8 @@ session_ids_a_eliminar <- c(
 participantes <- participantes %>%
   filter(!session_id %in% session_ids_a_eliminar)
 
+load(url("https://github.com/Kevin-carrasco/conclat/raw/refs/heads/main/conclat20250526.RData"))
+
 sessions2 <- conclat20250526$session_id
 
 base <- participantes %>%
