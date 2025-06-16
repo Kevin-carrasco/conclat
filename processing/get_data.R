@@ -1,0 +1,39 @@
+pacman::p_load(formr, dplyr, httr, purrr)
+
+formr_connect("kevin.carrasco@ug.uchile.cl", "k959371343") #use API to connect to formr
+conclat_v1 <- formr_raw_results("v1conclat")
+conclat_v2 <- formr_raw_results("v2conclat")
+
+
+conclat <- reduce(
+  list(
+    select(conclat_v1, -modified, -ended, -expired), 
+    select(conclat_v2, -session_id, -study_id, -iteration, -created, -ended, -expired)
+  ),
+  left_join,
+  by = "session"
+)
+
+participantes <- conclat[complete.cases(conclat[, c("session", "start_01", "nombre_encuestador", "a02")]), ]
+
+participantes <- participantes %>% filter(!correo %in% c("elbert.rodolfo@gmail.com", "Elbert.rodolfo@gmail.com", "prueba", "pedrodbclaro@gmail.com"))
+participantes <- participantes %>% filter(!nombre_encuestador %in% c("PRUEBA", "Prueba", "prueba", "prueba ", "Test", "test", "X", "0", "Bla", "prueba soria"))
+
+session_ids_a_eliminar <- c(
+  38177392, 38236915, 38237822, 38243626, 38251249, 38257603, 38257672, 38270222,
+  38276486, 38292577, 38293976, 38294261, 38294849, 38295202, 38301430, 38323962,
+  38324495, 38396682, 38406400, 38425176, 38425184, 38428686, 38446441, 38485681,
+  38530091, 38196432, 38269593, 38322308, 38421385, 38447129, 38497615, 38522406,
+  38169480, 38185879, 38186158, 38190256, 38239852, 38245412, 38251534, 38252244,
+  38262605, 38262740, 38287053, 38287622, 38287626, 38291735, 38291763, 38292565,
+  38292894, 38301813, 38325019, 38329933, 38393353, 38396949, 38397137, 38397393,
+  38436084, 38445046, 38467826, 38468081, 38494704, 38496315, 38508365
+)
+
+# Filtrar la base excluyendo esos IDs
+participantes <- participantes %>%
+  filter(!session_id %in% session_ids_a_eliminar)
+
+writexl::write_xlsx(participantes, "conclat20250616.xlsx")
+
+
